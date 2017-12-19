@@ -25,7 +25,8 @@ window.requestAnimFrame = (function(){
   pX,
   PY,
   pZ,
-  particleSystem;
+  particleSystem,
+  partition;
 
   
 function init(){
@@ -66,55 +67,55 @@ function init(){
     pMaterial = new THREE.ParticleBasicMaterial({
         color: 0xFFFFFF,
         size: 50,
-        /*
+        
         map: THREE.ImageUtils.loadTexture(
             "images/particle.png"
         ),
-        blending: THREE.AdditiveBlending,*/
+        blending: THREE.AdditiveBlending,
         transparent: true
     });
 
     createIndividualParticles();
-}  
+} 
 
 function createIndividualParticles(){
     // now create the individual particles
-    var radius = 20;
-    var theta = 0;
-    //var initalPoint = new THREE.Vector3(WIDTH/2, HEIGHT/2, 0);
+    var radius = 70;
+    partition = 180 / particleCount;
 
     for(var p = 0; p < particleCount; p++) {
         // create a particle with random
         // position values, -250 -> 250
-    
+            /*
             pX = Math.random() * 200 - 100,
             pY = Math.random() * 200 - 100,
             pZ = Math.random() * 200 - 100,
+            */
+            //generate the particle positions in a semicircle
+            pX = radius*Math.cos(toRadians(p*partition)),
+            pY = radius*Math.sin(toRadians(p*partition)),
+            pZ = Math.random() * 200 - 100,
+            pZ = 0,
             particle = new THREE.Vertex(
                 new THREE.Vector3(pX, pY, pZ)
             );
+            
         // create a velocity vector
-        particle.velocity = new THREE.Vector3(
-        -Math.random(),				// x
-        0,	// y
-        0);				// z
-    
+        particle.velocity = new THREE.Vector3(0, 0,	0);
+          
         // add it to the geometry
         particles.vertices.push(particle);
-        theta += 0.01;
+        console.log("particles: ", particle)
         }
-        //console.log("particles: ", particles.vertices);
+         
         // create the particle system
-        particleSystem = new THREE.ParticleSystem(
-        particles,
-        pMaterial);
-        //console.log("particle system: ", particleSystem);
+        particleSystem = new THREE.ParticleSystem(particles, pMaterial);
         particleSystem.sortParticles = true;
     
         // add it to the scene
         scene.addChild(particleSystem);
     
-        requestAnimFrame(update);
+       update();
 }
 
 
@@ -122,28 +123,59 @@ function createIndividualParticles(){
   function update() {
       
       // add some rotation to the system
-      //particleSystem.rotation.y -= 0.01;
+      particleSystem.rotation.x -= 0.01;
       var xBound = 200;
+      
+      var radius = 70;
+      var theta = 0;
 
       var pCount = particleCount;
       while(pCount--) {
+                
           // get the particle
           var particle = particles.vertices[pCount];
           
           // check if we need to reset
           //where the particles move
+        
           if(particle.position.x < -1 * xBound) {
               particle.position.x = xBound/2;
               particle.velocity.x = 0;
           }
           
-          // update the velocity
-          //particle.velocity.x -= Math.random() * .1;
-          particle.velocity.x -= Math.random() *0.0005;
+          var polarX = radius*Math.cos(toRadians(pCount*partition));
+          var polarY = radius*Math.sin(toRadians(pCount*partition));
+
           
+          // update the velocity
+          /*
+         particle.velocity.x -= Math.random() * .1;
+         particle.velocity.y -= Math.random() * .1;
+          */
+          /*
+         particle.position.x = radius*Math.cos(toRadians(pCount*partition));
+         particle.position.y = radius*Math.sin(toRadians(pCount*partition));
+          */
+         //particle.velocity.y -= polarY*0.01;
+          //particle.velocity.z += 0.01;
+          //console.log("particle velocity " + particle.velocity.x);
+           //console.log("particle position " + particle.position.x);
+          
+          //particle.velocity.x -= x;
+          //particle.velocity.y = y;
+          
+        //particle.position.x -= Math.random() * .1;
+          //particle.position.y -= polarY;
+          //console.log("particle positions " , particle.velocity);
+
           // and the position
-          particle.position.addSelf(
-              particle.velocity);
+        
+        //particle.position.addSelf(particle.velocity);
+              
+            
+          //particle.position.addSelf(particle.position);
+          
+          //partition += 0.01;
       }
       
       // flag to the particle system that we've
@@ -158,3 +190,13 @@ function createIndividualParticles(){
   }
   // requestAnimFrame(update);
   init();
+
+  // Converts from degrees to radians.
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+  };
+   
+  // Converts from radians to degrees.
+function toDegrees(radians) {
+    return radians * 180 / Math.PI;
+  };
