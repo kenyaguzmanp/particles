@@ -26,10 +26,7 @@ window.requestAnimFrame = (function(){
   // create a WebGL renderer, camera
   // and a scene
   var renderer = new THREE.WebGLRenderer();
-  var camera = new THREE.Camera(  VIEW_ANGLE,
-                                  ASPECT,
-                                  NEAR,
-                                  FAR  );
+  var camera = new THREE.Camera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   var scene = new THREE.Scene();
   
   // the camera starts at 0,0,0 so pull it back
@@ -44,11 +41,11 @@ window.requestAnimFrame = (function(){
   $container.append(renderer.domElement);
   
   // create the particle variables
-  var particleCount = 1800,
+  var particleCount = 50,
       particles = new THREE.Geometry(),
       pMaterial = new THREE.ParticleBasicMaterial({
           color: 0xFFFFFF,
-          size: 20,
+          size: 50,
           map: THREE.ImageUtils.loadTexture(
               "images/particle.png"
           ),
@@ -69,8 +66,8 @@ window.requestAnimFrame = (function(){
           );
       // create a velocity vector
       particle.velocity = new THREE.Vector3(
-          0,				// x
-          -Math.random(),	// y
+        -Math.random(),				// x
+          0,	// y
           0);				// z
 
       // add it to the geometry
@@ -91,7 +88,7 @@ window.requestAnimFrame = (function(){
   function update() {
       
       // add some rotation to the system
-      particleSystem.rotation.y += 0.01;
+      // particleSystem.rotation.z -= 0.01;
       
       var pCount = particleCount;
       while(pCount--) {
@@ -99,13 +96,14 @@ window.requestAnimFrame = (function(){
           var particle = particles.vertices[pCount];
           
           // check if we need to reset
-          if(particle.position.y < -200) {
-              particle.position.y = 200;
-              particle.velocity.y = 0;
+          //where the particles move
+          if(particle.position.x < -200) {
+              particle.position.x = 200;
+              particle.velocity.x = 0;
           }
           
           // update the velocity
-          particle.velocity.y -= Math.random() * .1;
+          particle.velocity.x -= Math.random() * .1;
           
           // and the position
           particle.position.addSelf(

@@ -3,28 +3,35 @@ var camera, scene, renderer;
 var raycaster;
 var mouse;
 var PI2 = Math.PI * 2;
+
+
 var programFill = function ( context ) {
     context.beginPath();
     context.arc( 0, 0, 0.5, 0, PI2, true );
     context.fill();
 };
+
 var programStroke = function ( context ) {
     context.lineWidth = 0.025;
     context.beginPath();
     context.arc( 0, 0, 0.5, 0, PI2, true );
     context.stroke();
 };
+
 var INTERSECTED;
 init();
 animate();
+
 function init() {
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
+    // container = document.createElement( 'div' );
+    var $container = $('#container');
+    // document.body.appendChild( container );
   
     camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
     camera.position.set( 0, 300, 500 );
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xf0f0f0 );
+
     for ( var i = 0; i < 100; i ++ ) {
         var particle = new THREE.Sprite( new THREE.SpriteCanvasMaterial( { color: Math.random() * 0x808080 + 0x808080, program: programStroke } ) );
         particle.position.x = Math.random() * 800 - 400;
@@ -38,12 +45,15 @@ function init() {
     
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
-    renderer = new THREE.CanvasRenderer();
+    // renderer = new THREE.CanvasRenderer();
+    var renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    container.appendChild( renderer.domElement );
-    stats = new Stats();
-    container.appendChild( stats.dom );
+    // attach the render-supplied DOM element
+    $container.append(renderer.domElement);
+    //container.appendChild( renderer.domElement );
+    // stats = new Stats();
+    // container.appendChild( stats.dom );
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     //
     window.addEventListener( 'resize', onWindowResize, false );
@@ -76,7 +86,7 @@ function render() {
     camera.updateMatrixWorld();
     // find intersections
     raycaster.setFromCamera( mouse, camera );
-    var intersects = raycaster.intersectObjects( scene.children );
+    var intersects = raycaster.intersectObjectss( scene.children );
     if ( intersects.length > 0 ) {
         if ( INTERSECTED != intersects[ 0 ].object ) {
             if ( INTERSECTED ) INTERSECTED.material.program = programStroke;
