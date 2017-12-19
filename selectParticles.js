@@ -45,8 +45,8 @@ function init() {
     
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
-    // renderer = new THREE.CanvasRenderer();
-    var renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.CanvasRenderer();
+    //var renderer = new THREE.WebGLRenderer();
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     // attach the render-supplied DOM element
